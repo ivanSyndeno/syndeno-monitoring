@@ -1,0 +1,24 @@
+route:
+  group_by: ['client','alertname']
+  group_wait: 1m #Tiempo de espera para agrupar para el mismo receptor
+  group_interval: 1m #Agrupar alertas en un mismo mensaje, si son iguales
+  repeat_interval: 1h
+  receiver: admin
+  routes:
+
+receivers:
+- name: admin
+  #group_by: ['client']
+  email_configs:
+  - to: 'icc21010@gmail.com'
+    from: 'ivan.carmona@syndeno.com'
+    headers:
+      subject: 'Syndeno Alertas: {{ .CommonAnnotations.title }}'
+    html: '{{ template "alert.tmpl" . }}'
+    smarthost: smtp.gmail.com:587                              #mx1.gc.syndeno.net:587
+    auth_username: 'ivan.carmona@syndeno.com'
+    auth_identity: 'ivan.carmona@syndeno.com'
+    auth_password: 'ajbsralyyygsekau'             #contraseña especial que se utiliza para comunicacione>
+
+templates:
+  - '/etc/alertmanager/templates/alert.tmpl'

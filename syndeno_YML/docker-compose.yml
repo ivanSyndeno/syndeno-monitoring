@@ -1,0 +1,166 @@
+                              ###### docker-compose syndeno-monitoring ######
+ 
+###### prometheus ######  
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    networks:
+      syndeno-network:
+       ipv4_address: 172.30.0.2  
+    ports: 
+    - "9090:9090"
+    volumes:
+      - pro-conf:/etc/prometheus/
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+     # - "--web.config.file=/etc/prometheus/web.yml"
+      - "--storage.tsdb.retention.size=3GB"
+      - "--storage.tsdb.wal-compression"
+    restart: always
+
+###### alertmanager ######
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    networks:
+      syndeno-network:
+       ipv4_address: 172.30.0.3
+    ports: 
+    - "9093:9093"
+    volumes:
+      - ale-conf:/etc/alertmanager 
+      #- ale-data:/alertmanager
+    restart: always
+
+###### grafana ######   
+
+  grafana:
+    image: grafana/grafana-oss
+    user: "742:742"
+    container_name: grafana
+    networks:
+     syndeno-network:
+      ipv4_address: 172.30.0.4
+    ports:
+    - "3000:3000"
+    volumes:
+      - gra-conf:/etc/grafana
+      - gra-data:/var/lib/grafana
+    restart: always
+
+###### nginx ######
+
+  nginx:
+    image: ivansyndeno/nginx-with-telnet:latest
+    container_name: nginx
+    restart: unless-stopped
+    networks:
+     syndeno-network:
+      ipv4_address: 172.30.0.5
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - web-root:/var/www/certbot/
+      - def-conf:/etc/nginx/conf.d/
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - prometheus
+      - alertmanager
+      - grafana
+
+####### certbot #######
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    networks:
+     syndeno-network:
+      ipv4_address: 172.30.0.6
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/certbot
+    depends_on:
+      - nginx
+#    command: certonly --webroot --webroot-path=/var/www/certbot --email tls.certificates@syndeno.com --agree-tos --staging -d monitoring.gc.syndeno.net -d prom.gc.syndeno.net -d alert.gc.syndeno.net
+
+###### Network ######
+
+networks:
+  syndeno-network:
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.30.0.0/16
+         gateway: 172.30.0.1
+
+###### Volumenes ######
+
+volumes:
+  certbot-etc:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/certbot/etc
+      o: bind
+
+  certbot-var:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/certbot/var
+      o: bind
+
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/views
+      o: bind
+
+  def-conf:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/nginx-conf
+      o: bind
+  
+  #ale-data:
+    #driver: local
+    #driver_opts:
+      #type: none
+      #device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/alertmanager/data
+      #o: bind
+
+  ale-conf:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/alertmanager/conf
+      o: bind
+
+  gra-conf:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/grafana/conf
+      o: bind
+
+  gra-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/grafana/data
+      o: bind
+  
+  pro-conf:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/monitoring-fed/syndeno_fedv1/syndeno-monitoring/prometheus
+      o: bind

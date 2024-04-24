@@ -1,0 +1,49 @@
+global:
+  scrape_interval: 1m
+  evaluation_interval: 1m
+#  scrape_timeout: 20s 
+rule_files:
+  - "prometheus_rules.yml"
+  - "kubernetes_rules.yml"
+  - "alertas_prueba.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+      #scheme: 'https'
+scrape_configs:
+
+  - job_name: 'job_80'
+    honor_labels: true
+    tls_config:
+      insecure_skip_verify: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job!=""}'
+    static_configs:
+      #- targets: ['pth.plt.bipeek.es']
+      - targets: ['pth.getwonder.tech']
+      - targets: ['pth.newe.es']
+      - targets: ['pth.plt.bipeek.es'] 
+      - targets: ['pth.plt.sesamelon.com']
+      - targets: ['pth.plt.gc.syndeno.net']
+      - targets: ['pth.plt.prezo.syndeno.io']
+      - targets: ['pth.plt.growpro.syndeno.io']
+      - targets: ['pth.plt.bildia.syndeno.io']
+      - targets: ['pth.plt.bildia.syndeno.io']
+      - targets: ['pth.plt.movizzon.syndeno.io']
+      - targets: ['pth.plt.az.zoa.syndeno.io']
+      - targets: ['pth.plt.suntropy.syndeno.io']
+      - targets: ['pth.plt.az.kluest.syndeno.io']
+      - targets: ['pth.plt.colibid.dev']
+      - targets: ['pth.plt.feending.syndeno.io']
+      - targets: ['pth.flipflow.syndeno.io']
+      - targets: ['pth.plt.voicit.syndeno.io']
+      - targets: ['pth.plt.imageryst.syndeno.io']
+     # - targets: ['prom.gc.syndeno.net']
+    basic_auth:
+      username: 'admin'
+      password: 'Syndeno2022!'

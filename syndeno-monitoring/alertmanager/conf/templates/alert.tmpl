@@ -1,0 +1,23 @@
+{{ define "alert.tmpl" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .CommonAnnotations.title }}</title>
+</head>
+<body>
+    <h1>Syndeno Alerts</h1>
+    <h2>{{ .CommonAnnotations.title }}</h2>
+    <p>{{ .CommonAnnotations.description }}</p>
+    <ul>
+        {{ range .Alerts }}
+        <li>
+            <strong>{{ .Labels.alertname }}</strong>: {{ .Annotations.summary }}
+        </li>
+        {{ end }}
+    </ul>
+</body>
+</html>
+{{ end }}
