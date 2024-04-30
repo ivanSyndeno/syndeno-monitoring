@@ -1,23 +1,171 @@
 {{ define "alert.tmpl" }}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .CommonAnnotations.title }}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syndeno Alertas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    }
+    header {
+      background-color: #333333;
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #ffffff;
+    }
+    h1 {
+      color: #223e92; /* Cambio de color aquí */
+      margin: 20px 0;
+    }
+    h2 {
+      color: #333333;
+      margin: 20px 0;
+    }
+    p {
+      color: #666666;
+      margin: 10px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 15px 20px;
+      border-bottom: 1px solid #dddddd;
+    }
+    th {
+      background-color: #f2f2f2;
+      color: #333333;
+      text-align: left;
+    }
+    .label {
+      font-weight: bold;
+      color: #333333;
+    }
+  </style>
 </head>
 <body>
-    <h1>Syndeno Alerts</h1>
-    <h2>{{ .CommonAnnotations.title }}</h2>
-    <p>{{ .CommonAnnotations.description }}</p>
-    <ul>
-        {{ range .Alerts }}
-        <li>
-            <strong>{{ .Labels.alertname }}</strong>: {{ .Annotations.summary }}
-        </li>
-        {{ end }}
-    </ul>
+  <div class="container">
+    <header>
+      <h1 style="color: #223e92;">Syndeno Alertas</h1>
+    </header>
+    <section>
+      <h2>Resumen:</h2>
+              {{ $foundValue := false }}
+              {{ $value := "" }}
+              {{ range .Alerts.Firing }}
+                  {{ if not $foundValue }}
+                      {{ $value = .Annotations.description }}
+                      {{ $foundValue = true }}
+                  {{ end }}
+              {{ end }}
+              {{ if $foundValue }}
+                  {{ $value }}
+              {{ else }}
+
+              {{ end }}
+
+      <hr>
+      <h2>Detalles de la Alerta:</h2>
+      <table>
+        <tr>
+          <th>Propiedad</th>
+          <th>Valor</th>
+        </tr>
+        <tr>          
+          <td class="label">Cliente</td>
+          <td class="label">
+              {{ $foundValue := false }}
+              {{ $value := "" }}
+              {{ range .Alerts.Firing }}
+                  {{ if not $foundValue }}
+                      {{ $value = .Labels.cluster }}
+                      {{ $foundValue = true }}
+                  {{ end }}
+              {{ end }}
+              {{ if $foundValue }}
+                  {{ $value }}
+              {{ else }}
+
+              {{ end }}
+          </td>
+
+
+        </tr>
+        <tr>
+          <td class="label">Alerta</td>
+          <td class="label">
+              {{ $foundValue := false }}
+              {{ $value := "" }}
+              {{ range .Alerts.Firing }}
+                  {{ if not $foundValue }}
+                      {{ $value = .Labels.alertname }} 
+                      {{ $foundValue = true }}
+                  {{ end }}
+              {{ end }}
+              {{ if $foundValue }}
+                  {{ $value }}
+              {{ else }}
+
+              {{ end }}
+          </td>
+
+
+        </tr>
+        <tr>
+          <td class="label">Severidad</td>
+          <td class="label">
+              {{ $foundValue := false }}
+              {{ $value := "" }}
+              {{ range .Alerts.Firing }}
+                  {{ if not $foundValue }}
+                      {{ $value = .Labels.severity }}
+                      {{ $foundValue = true }}
+                  {{ end }}
+              {{ end }}
+              {{ if $foundValue }}
+                  {{ $value }}
+              {{ else }}
+
+              {{ end }}
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Pod</td>
+          <td class="label">
+              {{ $foundValue := false }}
+              {{ $value := "" }}
+              {{ range .Alerts.Firing }}
+                  {{ if not $foundValue }}
+                      {{ $value = .Labels.pod }}
+                      {{ $foundValue = true }}
+                  {{ end }}
+              {{ end }}
+              {{ if $foundValue }}
+                  {{ $value }}
+              {{ else }}
+
+              {{ end }}
+          </td>
+        </tr>
+      </table>
+    </section>
+  </div>
 </body>
 </html>
 {{ end }}
