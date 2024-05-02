@@ -1,7 +1,7 @@
 1. Modificar ruta volumenes/bind.
 2. Abrir puertos interfaz de red.
 3. Modificar comando CERTBOT "--staging"(modo prueba) por "--force-renewal".
-4. "docker compose -d".
+4. "docker compose up -d".
 
 
 1. Comprobar no errores en logs.
