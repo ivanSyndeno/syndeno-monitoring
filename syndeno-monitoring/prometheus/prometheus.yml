@@ -33,7 +33,7 @@ scrape_configs:
       - targets: ['pth.plt.prezo.syndeno.io']
       - targets: ['pth.plt.growpro.syndeno.io']
       - targets: ['pth.plt.bildia.syndeno.io']
-      - targets: ['pth.plt.bildia.syndeno.io']
+#      - targets: ['pth.plt.az.bildia.syndeno.io']
       - targets: ['pth.plt.movizzon.syndeno.io']
       - targets: ['pth.plt.az.zoa.syndeno.io']
       - targets: ['pth.plt.suntropy.syndeno.io']
